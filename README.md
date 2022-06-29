@@ -1,11 +1,14 @@
 # Restaurant_sales_analysis
 Danny has cute little restaurant, Danny’s Diner  has captured some basic data from few months, hw want to customers visiting patterns, how much money spend which food are their favorite, how develop deep connection loyal program
 # Case Study: Danny's Diner
+
 <img src="https://user-images.githubusercontent.com/81607668/127727503-9d9e7a25-93cb-4f95-8bd0-20b87cb4b459.png" alt="Image" width="500" height="520">
+
 ## 📑 Table of Contents
-- [Business Task]. (#Business- task)
-- [Entity Relationship Diagram]. (#Entity-relationship-diagram)
-- [Case Study Question]. ()
+
+- [Business Task].
+- [Entity Relationship Diagram]
+- [Case Study Question].(https://github.com/binay-nirala/restaurant_sales_analysis/blob/7a5eefbb384e853990963e7886befcce7369449c/Solution)
 ***
 
 ## Business Task
