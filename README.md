@@ -8,7 +8,7 @@ Danny has cute little restaurant, Danny’s Diner  has captured some basic data 
 
 - [Business Task].
 - [Entity Relationship Diagram]
-- [Case Study Question].(https://github.com/binay-nirala/restaurant_sales_analysis/blob/7a5eefbb384e853990963e7886befcce7369449c/Solution)
+- [Case Study Question](https://github.com/binay-nirala/restaurant_sales_analysis/blob/7a5eefbb384e853990963e7886befcce7369449c/Solution)
 ***
 
 ## Business Task
