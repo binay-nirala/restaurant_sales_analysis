@@ -44,6 +44,7 @@ example, if customer A visted the restaurant twice on '2022-05-07', then number 
 
 #### Answer:
 | customer_id | visit_count |
+| ----------- | ----------- |
 | A           | 4           |
 | B           | 6           |
 | C           | 2           |
@@ -51,3 +52,16 @@ example, if customer A visted the restaurant twice on '2022-05-07', then number 
 - Customer A visited 4 times.
 - Customer B visited 6 times.
 - Customer C visited 2 times.
+-
+### #. What was the first item from the menu purchased by each customer?
+````sql
+WITH ordered_sales_cte AS
+   (
+  ````
+SELECT customer_id, order_date, product_name,
+       DENSE_RANK() OVER(PARITION BY s.customer_id)
+       ORDER BY s.order_date ) AS rank
+   FROM dbo.sales AS s
+   JOIN dbo.menu AS m
+     ON s.product_id = m.product_id
+     )
