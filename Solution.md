@@ -56,12 +56,19 @@ example, if customer A visted the restaurant twice on '2022-05-07', then number 
 ### #. What was the first item from the menu purchased by each customer?
 ````sql
 WITH ordered_sales_cte AS
-   (
-  ````
-SELECT customer_id, order_date, product_name,
+   ( 
+   SELECT customer_id, order_date, product_name,
        DENSE_RANK() OVER(PARITION BY s.customer_id)
        ORDER BY s.order_date ) AS rank
    FROM dbo.sales AS s
    JOIN dbo.menu AS m
      ON s.product_id = m.product_id
      )
+     
+     SELECT customer_id, product_name
+ 
+  ````
+FROM ordered_sales_cte
+WHERE rank = 1
+GROUP BY customer_id, product_name;
+
