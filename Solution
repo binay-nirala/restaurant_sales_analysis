@@ -1,1 +1,13 @@
-yes
+# 🍜 Case Study: Danny's Diner
+## Solutions 
+
+***
+
+### 1. What is the total amount each customer spent at the resturent?
+````sql
+SELECT s.customer_id, sum(price) as total_sales
+FROM dbo.sales AS s
+JOIN dbo.menu as m
+      ON s.product_id = m.product_id
+GROUP By customer_id ;
+````
