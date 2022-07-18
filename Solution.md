@@ -53,7 +53,7 @@ example, if customer A visted the restaurant twice on '2022-05-07', then number 
 - Customer B visited 6 times.
 - Customer C visited 2 times.
 -
-### #. What was the first item from the menu purchased by each customer?
+#### 3. What was the first item from the menu purchased by each customer?
 ````sql
 WITH ordered_sales_cte AS
    ( 
@@ -112,6 +112,7 @@ JOIN dbo.menu AS m
 
 
 - Most purchased item on the menu is ramen which is 8 times. Yummy!
+***
 
 ### 5. Which item was the most popular for each customer?
 ````sql
