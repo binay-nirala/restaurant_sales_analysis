@@ -99,7 +99,7 @@ JOIN dbo.menu AS m
   ON s.product_id = m.product_name
   GROUP BY s.product_id, product_name
   ORDER BY most_purchased DESC;
- ```
+ ````
  
 #### Steps:
 - **COUNT** number of ```product_id``` and **ORDER BY** ```most_purchased``` by descending order. 
