@@ -82,7 +82,7 @@ WITH first_item AS
 
 | customer_id | product_name|
 | ----------- | ----------- |
-| | A    | sushi |       
+| A       | sushi       
 | B           | curry        | 
 | C           | ramen        |
 
@@ -96,16 +96,15 @@ WITH first_item AS
 customers?
 ````sql
 SELECT 
-		   COUNT(s.product_id) as  most_purchase,
-		   m.product_name
-		FROM sales1 AS s
-		JOIN menu AS m
-		ON s.product_id = m.product_id
-		GROUP BY m.product_name
-		ORDER BY most_purchase DESC
-		LIMIT 1;
+		COUNT(s.product_id) as  most_purchase,
+		m.product_name
+	FROM sales1 AS s
+	JOIN menu AS m
+	ON s.product_id = m.product_id
+	GROUP BY m.product_name
+	ORDER BY most_purchase DESC
+	LIMIT 1;
  ````
- 
 #### Steps:
 - **COUNT** number of ```product_id``` and **ORDER BY** ```most_purchased``` by descending order. 
 - Then, use **LIMIT 1** to filter highest number of purchased item.
@@ -158,24 +157,21 @@ WHERE rank = 1;
 ### 6. Which item was purchased first by the customer after they became a member?
 
 ````sql
-WITH member_sales_cte AS 
-(
-
-   SELECT s.customer_id, m.join_date, s.order_date, s.product_id,
-      DENSE_RANK() OVER(PARTITION BY s.customer_id
-      ORDER BY s.order_date) AS rank
-   FROM sales AS s
-   JOIN members AS m
-      ON s.customer_id = m.customer_id
-   WHERE s.order_date >= m.join_date
-)
-
-SELECT s.customer_id, s.order_date, m2.product_name 
-FROM member_sales_cte AS s
-JOIN menu AS m2
-   ON s.product_id = m2.product_id
-WHERE rank = 1;
+WITH member_sale_cte AS (
+ SELECT s.customer_id, s.product_id, order_date, m.join_date,
+ dense_rank () OVER (partition by customer_id order by s.order_date) AS ranks
+ FROM sales1 AS s
+ JOIN members AS m
+ ON s.customer_id = m.customer_id
+ WHERE s.order_date >= m.join_date 
+ )
+ SELECT s.customer_id, s.order_date, m2.product_name
+ FROM member_sale_cte AS S
+ JOIN memeber
+ ON s.product_id = m2.product_id
+ WHERE ranks = 1;
 ````
+
 
 #### Steps:
 - Create ```member_sales_cte``` by using **windows function** and partitioning ```customer_id``` by ascending ```order_date```. Then, filter ```order_date``` to be on or after ```join_date```.
