@@ -95,25 +95,28 @@ WITH first_item AS
 ###  4. What is the most purchashed item on the munu and how many times was it purchased by all
 customers?
 ````sql
-SELECT TOP 1 (COUNT(s.product_id)) AS most_purchased, product_name
-FROM dbo.sales AS s
-JOIN dbo.menu AS m
-  ON s.product_id = m.product_name
-  GROUP BY s.product_id, product_name
-  ORDER BY most_purchased DESC;
+SELECT 
+		   COUNT(s.product_id) as  most_purchase,
+		   m.product_name
+		FROM sales1 AS s
+		JOIN menu AS m
+		ON s.product_id = m.product_id
+		GROUP BY m.product_name
+		ORDER BY most_purchase DESC
+		LIMIT 1;
  ````
  
 #### Steps:
 - **COUNT** number of ```product_id``` and **ORDER BY** ```most_purchased``` by descending order. 
-- Then, use **TOP 1** to filter highest number of purchased item.
+- Then, use **LIMIT 1** to filter highest number of purchased item.
 
 #### Answer:
 | most_purchased | product_name | 
 | ----------- | ----------- |
-| 8       | ramen |
+| 40       | ramen |
 
 
-- Most purchased item on the menu is ramen which is 8 times. Yummy!
+- Most purchased item on the menu is ramen which is 40 times. Yummy!
 ***
 
 ### 5. Which item was the most popular for each customer?
@@ -134,17 +137,17 @@ FROM fav_item_cte
 WHERE rank = 1;
 ````
 #### Steps:
-- Create a ```fav_item_cte``` and use **DENSE_RANK** to ```rank``` the ```order_count``` for each product by descending order for each customer.
-- Generate results where product ```rank = 1``` only as the most popular product for each customer.
+- Create a ```fav_item_cte``` and use **DENSE_RANK** to ```ranks``` the ```order_count``` for each product by descending order for each customer.
+- Generate results where product ```ranks = 1``` only as the most popular product for each customer.
 
 #### Answer:
 | customer_id | product_name | order_count |
 | ----------- | ---------- |------------  |
-| A           | ramen        |  3   |
-| B           | sushi        |  2   |
-| B           | curry        |  2   |
-| B           | ramen        |  2   |
-| C           | ramen        |  3   |
+| A           | ramen        |  15   |
+| B           | sushi        |  10 |
+| B           | curry        |  10  |
+| B           | ramen        |  10  |
+| C           | ramen        |  15 |
 
 - Customer A and C's favourite item is ramen.
 - Customer B enjoys all items on the menu. He/she is a true foodie, sounds like me!
@@ -157,6 +160,7 @@ WHERE rank = 1;
 ````sql
 WITH member_sales_cte AS 
 (
+
    SELECT s.customer_id, m.join_date, s.order_date, s.product_id,
       DENSE_RANK() OVER(PARTITION BY s.customer_id
       ORDER BY s.order_date) AS rank
