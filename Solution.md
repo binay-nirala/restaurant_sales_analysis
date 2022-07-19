@@ -6,40 +6,42 @@
 
 ### 1. What is the total amount each customer spent at the resturent?
 ````sql
-SELECT s.customer_id, SUM(price) AS total_sales
-FROM dbo.sales AS s
-JOIN dbo.menu AS m
-   ON s.product_id = m.product_id
-GROUP BY customer_id; 
+  SELECT s.customer_id,
+         SUM(m.price) AS total_sale
+     FROM menu AS m
+	 JOIN sales1 AS s
+	 ON s.product_id = m.product_id
+	 GROUP BY customer_id; 
 ````
 
 #### Steps:
 - Use **SUM** and **GROUP BY** to find out ```total_sales``` contributed by each customer.
-- Use **JOIN** to merge ```sales``` and ```menu``` tables as ```customer_id``` and ```price``` are from both tables.
+- Use **JOIN** to merge ```sales1``` and ```menu``` tables as ```customer_id``` and ```price``` are from both tables.
 
 #### Answer:
 | customer_id | total_sales |
 | ----------- | ----------- |
-| A           | 76          |
-| B           | 74          |
-| C           | 36          |
+| A           | 380          |
+| B           | 370         |
+| C           | 180         |
 
-- Customer A spent $76.
-- Customer B spent $74.
-- Customer C spent $36.
+- Customer A spent $380.
+- Customer B spent $370.
+- Customer C spent $180.
 
 ***
 ### 2. How many days has each customer visited the restaurent?
 ````sql
-SELECT customer_id, COUNT(DISTINCT(order_date)) AS visit_count
-FROM dbo.sales
-GROUP BY customer_id;
+SELECT customer_id,
+        count(DISTINCT order_date) AS visit_count
+	FROM sales1
+	GROUP BY customer_id;
+
 ````
 
 #### Steps:
 - Use **DISTINCT** and wrap with **COUNT** to find out ```visit_count``` for each customer.
-- If we do not use **DISTINCT** on ```order_date```, the number of days may be repeated. For
-example, if customer A visted the restaurant twice on '2022-05-07', then number of days is counted as 2 days insted of 1 day
+- If we do not use **DISTINCT** on ```order_date```, the number of days may be repeated.
 
 
 #### Answer:
@@ -55,36 +57,36 @@ example, if customer A visted the restaurant twice on '2022-05-07', then number 
 -
 #### 3. What was the first item from the menu purchased by each customer?
 ````sql
-WITH ordered_sales_cte AS
-   ( 
-   SELECT customer_id, order_date, product_name,
-       DENSE_RANK() OVER(PARITION BY s.customer_id)
-       ORDER BY s.order_date ) AS rank
-   FROM dbo.sales AS s
-   JOIN dbo.menu AS m
-     ON s.product_id = m.product_id
-     )
-     
-     SELECT customer_id, product_name
-     FROM ordered_sales_cte
-      WHERE rank = 1   
-     GROUP BY customer_id, product_name;
+WITH first_item AS
+ (
+	SELECT  s.customer_id,
+        s.product_id,
+        s.order_date,
+	    m.product_name,
+	DENSE_RANK() OVER (PARTITION BY customer_id ORDER BY order_date) AS ranks
+	FROM sales1 AS s
+	JOIN menu AS m
+	ON s.product_id = m.product_id
+	GROUP BY 1
+                       )
+    SELECT customer_id, product_name FROM first_item
+        WHERE ranks = 1;
+
   ````
 #### Steps:
-- Create a temp table order_sales_cte and use **Windows function** with **DENSE_RANK** to create a new column ```rank``` based on ```order_date```.
+- Create a temp table first_item and use **Windows function** with **DENSE_RANK** to create a new column ```ranks``` based on ```order_date```.
 - Instead of **ROW_NUMBER** or **RANK**, use **DENSE_RANK** as ```order_date``` is not time-stamped hence, there is no sequence as to which item is ordered first if 2 or more items are ordered on the same day.
--  Subsequently, GROUP BY all columns to show ```rank = 1``` only.
+-  Subsequently, GROUP BY all columns to show ```ranks = 1``` only.
 
 ####  Answer: 
 
 | customer_id | product_name|
 | ----------- | ----------- |
-| A           | Curry       |
-| A           | sushi        |
+| | A    | sushi |       
 | B           | curry        | 
 | C           | ramen        |
 
-- Customer A's first orders are curry and sushi.
+- Customer A's first orders is sushi
 - Customer B's first order is curry.
 - Customer C's first order is ramen.
 
