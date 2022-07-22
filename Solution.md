@@ -6,7 +6,7 @@
 
 ### 1. What is the total amount each customer spent at the resturent?
 ````sql
-  SELECT s.customer_id,
+ SELECT s.customer_id,
          SUM(m.price) AS total_sale
      FROM menu AS m
 	 JOIN sales1 AS s
@@ -33,10 +33,9 @@
 ### 2. How many days has each customer visited the restaurent?
 ````sql
 SELECT customer_id,
-        count(DISTINCT order_date) AS visit_count
+        COUNT(DISTINCT order_date) AS visit_count
 	FROM sales1
 	GROUP BY customer_id;
-
 ````
 
 #### Steps:
@@ -82,9 +81,9 @@ WITH first_item AS
 
 | customer_id | product_name|
 | ----------- | ----------- |
-| A       | sushi       
-| B           | curry        | 
-| C           | ramen        |
+| A           | sushi       |
+| B           | curry       | 
+| C           | ramen       |
 
 - Customer A's first orders is sushi
 - Customer B's first order is curry.
@@ -96,12 +95,12 @@ WITH first_item AS
 customers?
 ````sql
 SELECT 
-		COUNT(s.product_id) as  most_purchase,
-		m.product_name
-	FROM sales1 AS s
-	JOIN menu AS m
-	ON s.product_id = m.product_id
-	GROUP BY m.product_name
+	COUNT(s.product_id) as  most_purchase,
+	  m.product_name
+    FROM sales1 AS s
+    JOIN menu AS m
+    ON s.product_id = m.product_id
+        GROUP BY m.product_name
 	ORDER BY most_purchase DESC
 	LIMIT 1;
  ````
@@ -141,12 +140,12 @@ WHERE rank = 1;
 
 #### Answer:
 | customer_id | product_name | order_count |
-| ----------- | ---------- |------------  |
-| A           | ramen        |  15   |
-| B           | sushi        |  10 |
-| B           | curry        |  10  |
-| B           | ramen        |  10  |
-| C           | ramen        |  15 |
+| ----------- | ----------   |------------ |
+| A           | ramen        |  15         |
+| B           | sushi        |  10         |
+| B           | curry        |  10         |
+| B           | ramen        |  10         |
+| C           | ramen        |  15         |
 
 - Customer A and C's favourite item is ramen.
 - Customer B enjoys all items on the menu. He/she is a true foodie, sounds like me!
@@ -245,13 +244,13 @@ GROUP BY s.customer_id;
 
 #### Answer:
 | customer_id | unique_menu_item | total_sales |
-| ----------- | ---------- |----------  |
-| A           | 2 |  25       |
-| B           | 2 |  40       |
+| ----------- | ----------       |----------   |
+| A           | 2                |125          |
+| B           | 2                |200          |
 
 Before becoming members,
-- Customer A spent $ 25 on 2 items.
-- Customer B spent $40 on 2 items.
+- Customer A spent $ 125 on 2 items.
+- Customer B spent $200 on 2 items.
 
 ***
 
@@ -269,10 +268,10 @@ WITH price_points AS
 )
 
 SELECT s.customer_id, SUM(p.points) AS total_points
-FROM price_points_cte AS p
+FROM price_points AS p
 JOIN sales AS s
    ON p.product_id = s.product_id
-GROUP BY s.customer_id
+GROUP BY s.customer_id;
 ````
 
 #### Steps:
@@ -297,36 +296,36 @@ Using ```price_points```, **SUM** the ```points```.
 
 ***
 
-### 10. 10. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi — how many points do customer A and B have at the end of January?
+###  10. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi — how many points do customer A and B have at the end of January?
 
 ````sql
-WITH dates_cte AS 
+WITH point_progamer AS
 (
-   SELECT *, 
-      DATEADD(DAY, 6, join_date) AS valid_date, 
-      EOMONTH('2021-01-31') AS last_date
-   FROM members AS m
-)
-
+SELECT *, 
+     DATE_ADD(join_date, INTERVAL 6 DAY) AS valid_date,
+     LAST_DAY('2021-01-31') AS last_date
+     FROM members AS m2
+     )
 SELECT d.customer_id, s.order_date, d.join_date, d.valid_date, d.last_date, m.product_name, m.price,
    SUM(CASE
       WHEN m.product_name = 'sushi' THEN 2 * 10 * m.price
       WHEN s.order_date BETWEEN d.join_date AND d.valid_date THEN 2 * 10 * m.price
       ELSE 10 * m.price
       END) AS points
-FROM dates_cte AS d
-JOIN sales AS s
+FROM point_progamer AS d
+JOIN sales1 AS s
    ON d.customer_id = s.customer_id
 JOIN menu AS m
    ON s.product_id = m.product_id
 WHERE s.order_date < d.last_date
 GROUP BY d.customer_id, s.order_date, d.join_date, d.valid_date, d.last_date, m.product_name,
 m.price
+     
 ````
 
 
 #### Steps:
-- In ```dates_cte```, find out customer’s ```valid_date``` (which is 6 days after ```join_date``` and inclusive of ```join_date```) and ```last_day``` of Jan 2021 (which is ‘2021–01–31’).
+- In ```point_progamer``, find out customer’s ```valid_date``` (which is 6 days after ```join_date``` and inclusive of ```join_date```) and ```last_day``` of Jan 2021 (which is ‘2021–01–31’).
 
 Our assumptions are:
 - On Day -X to Day 1 (customer becomes member on Day 1 ```join_date```), each $1 spent is 10 points and for sushi, each $1 spent is 20 points.
